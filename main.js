@@ -6,12 +6,9 @@ const entitiesList = document.getElementById('entities-list');
 const nextButton = document.getElementById('next-button');
 const previousButton = document.getElementById('previous-button');
 
-let dataView = [];
 let curentCharacterPage = 1;
 let curentPlanetPage = 1;
 let curentVehiclePage = 1;
-let curentPage = 0;
-let totalPages = 5;
 
 const URLS = {
    films: "https://swapi.dev/api/films/",
@@ -22,8 +19,8 @@ const URLS = {
    vehicles: "https://swapi.dev/api/vehicles/"
 }
 
-previousButton.style.display = 'none';
 nextButton.style.display = 'none';
+previousButton.style.display = 'none';
 
 characterList.addEventListener('click', loadCharacters);
 planetList.addEventListener('click', loadPlanets);
@@ -48,15 +45,12 @@ function loadCharacters() {
       entitiesList.appendChild(listItem);
     });
 
-   previousButton.style.display = 'block';
    nextButton.style.display = 'block';
+   previousButton.style.display = 'block';
 
    updateSectionTitle('Characters');
 
-   const viewButtons = document.querySelectorAll('#view-button');
-   viewButtons.forEach(button => {
-   // button.addEventListener('click', showEntityDetails);
-   });
+   currentSection = 'characters';
   });
 }
 
@@ -75,8 +69,11 @@ function loadPlanets() {
      const listItem = createListItem(planet.name);
      entitiesList.appendChild(listItem);
     });
+    previousButton.style.display = 'block';
+    nextButton.style.display = 'block';
 
    updateSectionTitle('Planets');
+   currentSection = 'planets';
   });
 }
 
@@ -97,19 +94,39 @@ function loadVehicles() {
     });
 
     updateSectionTitle('Vehicle');
+    currentSection = 'vehicles';
   });
 }
+
 function nextPage() {
-  if (curentCharacterPage < totalPages) {
+  if (currentSection === "characters") {
     curentCharacterPage++;
     loadCharacters();
+  } else if (currentSection === "planets") {
+    curentPlanetPage++;
+    loadPlanets();
+  } else if (currentSection === "vehicles") {
+    curentVehiclePage++;
+    loadVehicles();
   }
 }
 
 function previousPage() {
-  if (curentCharacterPage > 1) {
-    curentCharacterPage--;
-    loadCharacters();
+  if (currentSection === "characters") {
+    if (curentCharacterPage > 1) {
+      curentCharacterPage--;
+      loadCharacters();
+    }
+  } else if (currentSection === "planets") {
+    if (curentPlanetPage > 1) {
+      curentPlanetPage--;
+      loadPlanets();
+    }
+  } else if (currentSection === "vehicles") {
+    if (curentVehiclePage > 1) {
+      curentVehiclePage--;
+      loadVehicles();
+    }
   }
 }
 
@@ -142,15 +159,4 @@ listItem
 
 function updateSectionTitle(title) {
   document.getElementById('section-title').textContent = title;
-}
-
-function loadDetails (name) {
-  const entityname = JSON.parse(e.target.dataset.view);
-   const card = e.target.closest('.card');
-
-   card.innerHTML = `<p>Details about ${entityname}</p>
-   <p class="card-text">${birth_year}</p>
-   <p class="card-text">${gender}</p>
-   <p class="card-text">${eheight}</p>
-   <p class="card-text">${hair_color}</p>`
 }
